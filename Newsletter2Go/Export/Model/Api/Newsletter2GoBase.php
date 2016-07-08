@@ -52,7 +52,7 @@ class Newsletter2GoBase extends AbstractNewsletter2Go implements Newsletter2GoBa
     {
         $composerPath = __DIR__ . '/../../composer.json';
         $realPath = realpath($composerPath);
-        $version = '3001';
+        $version = '4000';
         if (file_exists($realPath)) {
             $json = file_get_contents($realPath);
             $jsonArray = json_decode($json, true);

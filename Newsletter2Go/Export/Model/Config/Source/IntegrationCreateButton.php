@@ -8,7 +8,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 class IntegrationCreateButton extends Field
 {
 
-    const NEWSLETTER2GO_CONNECT_URL = "https://www.newsletter2go.com/integrations/#/integration/MAG?version=3300&token=<token>&url=";
+    const NEWSLETTER2GO_CONNECT_URL = "https://ui.newsletter2go.com/integrations/connect/MAG2/?version=4000&token=<token>&url=";
 
     /**
      * Retrieve element HTML markup
