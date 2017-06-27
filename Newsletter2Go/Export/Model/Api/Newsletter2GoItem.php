@@ -8,7 +8,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Webapi\Request;
-use Magento\Framework\Webapi\Rest\Response;
+use Magento\Framework\Webapi\Rest\Response as RestResponse;
 use Newsletter2Go\Export\Api\Newsletter2GoItemInterface;
 use Newsletter2Go\Export\Api\Data\ResponseInterfaceFactory;
 use Magento\Framework\App\ObjectManager;
@@ -25,14 +25,15 @@ class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoIt
      * @param StoreManagerInterface $storeManager
      * @param ScopeConfigInterface $config
      * @param Request $request
-     * @param Response $response
+     * @param RestResponse $response
      * @param ResponseInterfaceFactory $responseFactory
      * @param ProductFactory $productFactory
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         ScopeConfigInterface $config,
-        Request $request, Response $response,
+        Request $request,
+        RestResponse $response,
         ResponseInterfaceFactory $responseFactory,
         ProductFactory $productFactory
     )
