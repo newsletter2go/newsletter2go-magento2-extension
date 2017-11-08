@@ -5,7 +5,7 @@ namespace Newsletter2Go\Export\Model\Api;
 use Magento\Framework\Webapi\Exception;
 use Magento\Framework\Webapi\Request;
 use Magento\Newsletter\Model\Subscriber;
-use Newsletter2Go\Export\Api\Data\ResponseInterfaceFactory;
+use Newsletter2Go\Export\Api\Data\ResponseFactoryInterface;
 use Newsletter2Go\Export\Api\Newsletter2GoCustomerInterface;
 use Magento\Framework\Webapi\Rest\Response;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -41,17 +41,19 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
 
     /**
      * Newsletter2GoCustomer constructor.
+     *
      * @param StoreManagerInterface $storeManager
      * @param ScopeConfigInterface $config
      * @param Request $request
      * @param Response $response
-     * @param ResponseInterfaceFactory $responseFactory
+     * @param ResponseFactoryInterface $responseFactory
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         ScopeConfigInterface $config,
-        Request $request, Response $response,
-        ResponseInterfaceFactory $responseFactory)
+        Request $request,
+        Response $response,
+        ResponseFactoryInterface $responseFactory)
     {
         parent::__construct($responseFactory);
         $this->storeManager = $storeManager;

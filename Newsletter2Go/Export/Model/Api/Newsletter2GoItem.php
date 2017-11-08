@@ -8,9 +8,9 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Webapi\Request;
-use Magento\Framework\Webapi\Rest\Response;
+use Magento\Framework\Webapi\Rest\Response as RestResponse;
 use Newsletter2Go\Export\Api\Newsletter2GoItemInterface;
-use Newsletter2Go\Export\Api\Data\ResponseInterfaceFactory;
+use Newsletter2Go\Export\Api\Data\ResponseFactoryInterface;
 use Magento\Framework\App\ObjectManager;
 
 class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoItemInterface
@@ -22,18 +22,20 @@ class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoIt
 
     /**
      * Newsletter2GoItem constructor.
+     *
      * @param StoreManagerInterface $storeManager
      * @param ScopeConfigInterface $config
      * @param Request $request
-     * @param Response $response
-     * @param ResponseInterfaceFactory $responseFactory
+     * @param RestResponse $response
+     * @param ResponseFactoryInterface $responseFactory
      * @param ProductFactory $productFactory
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         ScopeConfigInterface $config,
-        Request $request, Response $response,
-        ResponseInterfaceFactory $responseFactory,
+        Request $request,
+        RestResponse $response,
+        ResponseFactoryInterface $responseFactory,
         ProductFactory $productFactory
     )
     {

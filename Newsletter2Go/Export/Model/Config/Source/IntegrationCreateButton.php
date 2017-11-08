@@ -21,13 +21,16 @@ class IntegrationCreateButton extends Field
         $element->setType('button');
         $element->setData('value', 'Connect to Newsletter2Go');
 
-        if (!$this->_scopeConfig->getValue('newsletter2go/general/token')) {
+        if (!$this->_scopeConfig->getValue('newsletter_go/general/token')) {
             $element->setDisabled('true');
         }
 
         // add shop url parameter
         $shopUrl = $this->_storeManager->getStore()->getBaseUrl();
         $url = self::NEWSLETTER2GO_CONNECT_URL . urlencode($shopUrl);
+
+        // add callback url parameter
+        $url .= '&callback=' . $shopUrl . 'n2gocallback/Callback/Index';
 
         // add language parameter
         $languageCode = $this->_scopeConfig->getValue('general/locale/code', 'stores');

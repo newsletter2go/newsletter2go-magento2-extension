@@ -3,7 +3,6 @@
 namespace Newsletter2Go\Export\Model\Observer;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\ObjectManagerInterface;
@@ -16,14 +15,20 @@ class RegisterIntegration implements ObserverInterface
 
     const NEWSLETTER2GO_URL = 'https://www.newsletter2go.de/';
 
+    /** @var   ObjectManagerInterface*/
+    private $om;
+
+    /** @var   ScopeConfigInterface*/
+    private $config;
+
     /**
      * RegisterIntegration constructor.
-     * @param ScopeConfigInterface $scope
+     * @param ScopeConfigInterface $config
      * @param ObjectManagerInterface $om
      */
-    public function __construct(ScopeConfigInterface $scope, ObjectManagerInterface $om)
+    public function __construct(ScopeConfigInterface $config, ObjectManagerInterface $om)
     {
-        $this->config = $scope;
+        $this->config = $config;
         $this->om = $om;
     }
 
@@ -33,7 +38,7 @@ class RegisterIntegration implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $tokenString = $this->config->getValue('newsletter2go/general/token');
+        $tokenString = $this->config->getValue('newsletter_go/general/token');
         if (!$tokenString) {
             throw new Exception(new Phrase("Reset current API token because token must not be empty!"));
         }
