@@ -3,7 +3,6 @@
 namespace Newsletter2Go\Export\Model\Config\Source;
 
 use Magento\Config\Block\System\Config\Form\Field;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Token extends Field
@@ -14,5 +13,4 @@ class Token extends Field
 
         return parent::_getElementHtml($element);
     }
-
 }

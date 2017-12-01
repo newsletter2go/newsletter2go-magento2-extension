@@ -11,6 +11,10 @@ use Magento\Framework\Webapi\Rest\Response;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\ObjectManager;
+use Magento\Customer\Model as CustomerModel;
+use Magento\Newsletter\Model as NewsletterModel;
+use Magento\Customer\Model\ResourceModel as CustomerResourceModel;
+use Magento\Newsletter\Model\ResourceModel as NewsletterResourceModel;
 
 class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2GoCustomerInterface
 {
@@ -39,15 +43,6 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
      */
     private $response;
 
-    /**
-     * Newsletter2GoCustomer constructor.
-     *
-     * @param StoreManagerInterface $storeManager
-     * @param ScopeConfigInterface $config
-     * @param Request $request
-     * @param Response $response
-     * @param ResponseFactoryInterface $responseFactory
-     */
     public function __construct(
         StoreManagerInterface $storeManager,
         ScopeConfigInterface $config,
@@ -56,6 +51,7 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
         ResponseFactoryInterface $responseFactory)
     {
         parent::__construct($responseFactory);
+
         $this->storeManager = $storeManager;
         $this->config = $config;
         $this->om = ObjectManager::getInstance();
@@ -63,11 +59,6 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
         $this->response = $response;
     }
 
-    /**
-     * Customer export method
-     * @api
-     * @return \Newsletter2Go\Export\Api\Data\ResponseInterface
-     */
     public function getCustomers()
     {
         $group = $this->request->getParam('group');
@@ -82,8 +73,7 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
         try {
             $billingAdded = false;
             if (empty($fields)) {
-                $customerFields = $this->getCustomerFields();
-                $fields = array_keys($customerFields->getData());
+                $fields = array_keys($this->buildCustomerFields());
             } else if (!in_array('default_billing', $fields)) {
                 $fields[] = 'default_billing';
                 $billingAdded = true;
@@ -103,8 +93,8 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
                 $subscribedCond = 'ns.subscriber_status = ' . Subscriber::STATUS_SUBSCRIBED;
             }
 
-            /** @var \Magento\Customer\Model\ResourceModel\Customer\Collection $collection */
-            $collection = $this->om->get('Magento\Customer\Model\ResourceModel\Customer\Collection');
+            /** @var CustomerResourceModel\Customer\Collection $collection */
+            $collection = $this->om->get(CustomerResourceModel\Customer\Collection::class);
             $collection->addAttributeToSelect('*');
 
             //Join with subscribers
@@ -138,8 +128,8 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
             }
 
             $customers = $collection->load()->toArray($fields);
-            /** @var \Magento\Customer\Model\Address $addressModel */
-            $addressModel = $this->om->get('Magento\Customer\Model\Address');
+            /** @var CustomerModel\Address $addressModel */
+            $addressModel = $this->om->get(CustomerModel\Address::class);
             foreach ($customers as &$customer) {
                 $addressModel->load($customer['default_billing']);
                 if (array_key_exists('telephone', $customer)) {
@@ -163,7 +153,7 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
                 }
 
                 if (isset($customer['gender'])) {
-                    $customer['gender'] = ($customer['gender'] == 1 ? 'm' : 'f');
+                    $customer['gender'] = $customer['gender'] == 1 ? 'm' : 'f';
                 }
             }
 
@@ -187,8 +177,8 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
      */
     public function getOnlySubscribers($fields, $subscribed, $limit, $offset = 0, $emails = [], $storeId = null)
     {
-        /** @var \Magento\Newsletter\Model\ResourceModel\Subscriber\Collection $collection */
-        $collection = $this->om->get('Magento\Newsletter\Model\ResourceModel\Subscriber\Collection');
+        /** @var NewsletterResourceModel\Subscriber\Collection $collection */
+        $collection = $this->om->get(NewsletterResourceModel\Subscriber\Collection::class);
         $collection->addFieldToFilter('customer_id', 0);
         $collection->addFieldToSelect('subscriber_email', 'email');
         $collection->addFieldToSelect('store_id');
@@ -215,15 +205,10 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
         return $this->generateSuccessResponse($subscribers['items']);
     }
 
-    /**
-     * Customer groups export method
-     * @api
-     * @return \Newsletter2Go\Export\Api\Data\ResponseInterface
-     */
     public function getCustomerGroups()
     {
-        /** @var \Magento\Customer\Model\ResourceModel\Group\Collection $groups */
-        $groups = $this->om->get('Magento\Customer\Model\ResourceModel\Group\Collection');
+        /** @var CustomerResourceModel\Group\Collection|CustomerModel\Group[] $groups */
+        $groups = $this->om->get(CustomerResourceModel\Group\Collection::class);
         $result = [
             [
                 'id' => 'subscribers-only',
@@ -232,7 +217,6 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
             ],
         ];
 
-        /** @var \Magento\Customer\Model\Group $group */
         foreach ($groups as $group) {
             $result[] = [
                 'id' => $group->getId(),
@@ -264,15 +248,15 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
         }
 
         if ($groupId === 'subscribers-only') {
-            /** @var \Magento\Newsletter\Model\ResourceModel\Subscriber\Collection $collection */
-            $collection = $this->om->get('Magento\Newsletter\Model\ResourceModel\Subscriber\Collection');
+            /** @var NewsletterResourceModel\Subscriber\Collection $collection */
+            $collection = $this->om->get(NewsletterResourceModel\Subscriber\Collection::class);
             $collection->addFieldToFilter('customer_id', 0);
             if ($subscribed) {
                 $collection->useOnlySubscribed();
             }
         } else {
-            /** @var \Magento\Customer\Model\ResourceModel\Customer\Collection $collection */
-            $collection = $this->om->get('Magento\Customer\Model\ResourceModel\Customer\Collection');
+            /** @var CustomerResourceModel\Customer\Collection $collection */
+            $collection = $this->om->get(CustomerResourceModel\Customer\Collection::class);
             $collection->addAttributeToFilter('group_id', $groupId);
             if ($subscribed) {
                 $collection->joinTable(['ns' => 'newsletter_subscriber'], 'customer_id=entity_id', ['subscriber_status'], 'ns.subscriber_status=1');
@@ -317,12 +301,12 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
             return $this->generateErrorResponse('Store Id parameter must be a number!');
         }
 
-        /** @var \Magento\Customer\Model\Customer $customer */
-        $customer = $this->om->get('Magento\Customer\Model\Customer');
+        /** @var CustomerModel\Customer $customer */
+        $customer = $this->om->get(CustomerModel\Customer::class);
         $customer->setWebsiteId($this->storeManager->getWebsite()->getId())->loadByEmail($email);
 
-        /** @var \Magento\Newsletter\Model\Subscriber $subscriber */
-        $subscriber = $this->om->get('Magento\Newsletter\Model\Subscriber');
+        /** @var NewsletterModel\Subscriber $subscriber */
+        $subscriber = $this->om->get(NewsletterModel\Subscriber::class);
         $subscriber->loadByEmail($email);
         $subscriber->setCustomerId($customer->getId() ?: 0);
         if ($status && !$subscriber->getId()) {
@@ -332,8 +316,8 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
                 return $this->generateErrorResponse('No customer or subscriber found with email: ' . $email);
             }
 
-            /** @var \Magento\Newsletter\Model\Subscriber $subscriber */
-            $subscriber = $this->om->create('Magento\Newsletter\Model\Subscriber');
+            /** @var NewsletterModel\Subscriber $subscriber */
+            $subscriber = $this->om->create(NewsletterModel\Subscriber::class);
             $subscriber->setCustomerId($customer->getId() ?: 0);
             $subscriber->setEmail($email);
             $subscriber->setSubscriberConfirmCode($subscriber->randomSequence());
@@ -350,38 +334,39 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
         return $this->generateSuccessResponse($subscriber->toArray());
     }
 
-    /**
-     * Customer fields export method
-     * @api
-     * @return \Newsletter2Go\Export\Api\Data\ResponseInterface
-     */
     public function getCustomerFields()
     {
-        $result = [];
-        $result['entity_id'] = $this->createArray('entity_id', 'Customer Id.', 'Unique customer number', 'Integer');
-        $result['website_id'] = $this->createArray('website_id', 'Website Id.', 'Unique website number', 'Integer');
-        $result['email'] = $this->createArray('email', 'E-mail', 'E-mail address', 'String');
-        $result['group_id'] = $this->createArray('group_id', 'Group Id.', 'Unique group number', 'Integer');
-        $result['created_at'] = $this->createArray('created_at', 'Created at', 'Timestamp of creation', 'Date');
-        $result['updated_at'] = $this->createArray('updated_at', 'Updated at', 'Timestamp of last update', 'Date');
-        $result['dob'] = $this->createArray('dob', 'Date of birth', 'Date of birth', 'Date');
-        $result['disable_auto_group_change'] = $this->createArray('disable_auto_group_change', 'Disable auto group change', 'Disable auto group change', 'Boolean');
-        $result['created_in'] = $this->createArray('created_in', 'Created in', 'Place it was created admin side or by registration', 'String');
-        $result['suffix'] = $this->createArray('suffix', 'Suffix', 'suffix', 'String');
-        $result['prefix'] = $this->createArray('prefix', 'Prefix', 'Prefix', 'String');
-        $result['firstname'] = $this->createArray('firstname', 'Firstname', 'Firstname', 'String');
-        $result['middlename'] = $this->createArray('middlename', 'Middlename', 'middlename', 'String');
-        $result['lastname'] = $this->createArray('lastname', 'Lastname', 'lastname', 'String');
-        $result['taxvat'] = $this->createArray('taxvat', 'Tax VAT', 'Tax VAT', 'String');
-        $result['store_id'] = $this->createArray('store_id', 'Store Id.', 'Unique store number', 'Integer');
-        $result['gender'] = $this->createArray('gender', 'Gender', 'Gender', 'Integer');
-        $result['is_active'] = $this->createArray('is_active', 'Is active', 'Is Active', 'Boolean');
-        $result['subscriber_status'] = $this->createArray('subscriber_status', 'Subscriber status', 'Subscriber status', 'Integer');
-        $result['default_billing'] = $this->createArray('default_billing', 'Default billing address', 'Default billing address', 'Object');
-        $result['default_shipping'] = $this->createArray('default_shipping', 'Default shipping address', 'Default shipping address', 'Object');
-        $result['telephone'] = $this->createArray('telephone', 'Telephone number', 'Telephone number', 'String');
-
-        return $this->generateSuccessResponse($result);
+        return $this->generateSuccessResponse($this->buildCustomerFields());
     }
 
+    /**
+     * @return array<string, array<string, string>>
+     */
+    protected function buildCustomerFields()
+    {
+        return [
+            'entity_id' => $this->createArray('entity_id', 'Customer Id.', 'Unique customer number', 'Integer'),
+            'website_id' => $this->createArray('website_id', 'Website Id.', 'Unique website number', 'Integer'),
+            'email' => $this->createArray('email', 'E-mail', 'E-mail address', 'String'),
+            'group_id' => $this->createArray('group_id', 'Group Id.', 'Unique group number', 'Integer'),
+            'created_at' => $this->createArray('created_at', 'Created at', 'Timestamp of creation', 'Date'),
+            'updated_at' => $this->createArray('updated_at', 'Updated at', 'Timestamp of last update', 'Date'),
+            'dob' => $this->createArray('dob', 'Date of birth', 'Date of birth', 'Date'),
+            'disable_auto_group_change' => $this->createArray('disable_auto_group_change', 'Disable auto group change', 'Disable auto group change', 'Boolean'),
+            'created_in' => $this->createArray('created_in', 'Created in', 'Place it was created admin side or by registration', 'String'),
+            'suffix' => $this->createArray('suffix', 'Suffix', 'suffix', 'String'),
+            'prefix' => $this->createArray('prefix', 'Prefix', 'Prefix', 'String'),
+            'firstname' => $this->createArray('firstname', 'Firstname', 'Firstname', 'String'),
+            'middlename' => $this->createArray('middlename', 'Middlename', 'middlename', 'String'),
+            'lastname' => $this->createArray('lastname', 'Lastname', 'lastname', 'String'),
+            'taxvat' => $this->createArray('taxvat', 'Tax VAT', 'Tax VAT', 'String'),
+            'store_id' => $this->createArray('store_id', 'Store Id.', 'Unique store number', 'Integer'),
+            'gender' => $this->createArray('gender', 'Gender', 'Gender', 'Integer'),
+            'is_active' => $this->createArray('is_active', 'Is active', 'Is Active', 'Boolean'),
+            'subscriber_status' => $this->createArray('subscriber_status', 'Subscriber status', 'Subscriber status', 'Integer'),
+            'default_billing' => $this->createArray('default_billing', 'Default billing address', 'Default billing address', 'Object'),
+            'default_shipping' => $this->createArray('default_shipping', 'Default shipping address', 'Default shipping address', 'Object'),
+            'telephone' => $this->createArray('telephone', 'Telephone number', 'Telephone number', 'String'),
+        ];
+    }
 }

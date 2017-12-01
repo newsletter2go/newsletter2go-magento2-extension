@@ -4,95 +4,76 @@ namespace Newsletter2Go\Export\Model\Api;
 
 use Newsletter2Go\Export\Api\Data\ResponseInterface;
 
+/**
+ * @api
+ */
 class Response implements ResponseInterface
 {
-
-    /** @var boolean  */
+    /**
+     * @var boolean
+     */
     private $success;
 
-    /** @var  string */
+    /**
+     * @var string
+     */
     private $message;
 
-    /** @var  string */
-    private $errorcode;
-
-    /** @var mixed */
-    private $data;
+    /**
+     * @var string
+     */
+    private $errorCode;
 
     /**
-     * @api
-     * @return mixed
+     * @var string
      */
+    private $data;
+
     public function getData()
     {
         return $this->data;
     }
 
-    /**
-     * @api
-     * @param mixed $data
-     * @return null
-     */
     public function setData($data)
     {
         $this->data = $data;
+
+        return $this;
     }
 
-    /**
-     * @api
-     * @return boolean
-     */
     public function isSuccess()
     {
         return $this->success;
     }
 
-    /**
-     * @api
-     * @param boolean $success
-     * @return null
-     */
     public function setSuccess($success)
     {
         $this->success = $success;
+
+        return $this;
     }
 
-    /**
-     * @api
-     * @return string
-     */
     public function getMessage()
     {
         return $this->message;
     }
 
-    /**
-     * @api
-     * @param string $message
-     * @return null
-     */
     public function setMessage($message)
     {
         $this->message = $message;
+
+        return $this;
     }
 
-    /**
-     * @api
-     * @return string
-     */
-    public function getErrorcode()
+    public function getErrorCode()
     {
-        return $this->errorcode;
+        return $this->errorCode;
     }
 
-    /**
-     * @api
-     * @param string $errorcode
-     * @return null
-     */
-    public function setErrorcode($errorcode)
+    public function setErrorCode($errorCode)
     {
-        $this->errorcode = $errorcode;
-    }
+        $this->errorCode = $errorCode;
 
+        return $this;
+    }
 }

@@ -8,17 +8,17 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Validator\Exception;
 use Magento\Framework\Phrase;
-use Magento\Integration\Model\Oauth\Token;
+use Magento\Backend\Model\Auth\Session;
+use Magento\Integration\Model as IntegrationModel;
 
 class RegisterIntegration implements ObserverInterface
 {
+    const NEWSLETTER2GO_URL = 'https://www.newsletter2go.com/';
 
-    const NEWSLETTER2GO_URL = 'https://www.newsletter2go.de/';
-
-    /** @var   ObjectManagerInterface*/
+    /** @var ObjectManagerInterface*/
     private $om;
 
-    /** @var   ScopeConfigInterface*/
+    /** @var ScopeConfigInterface*/
     private $config;
 
     /**
@@ -57,12 +57,12 @@ class RegisterIntegration implements ObserverInterface
      * Token is either fetched if it exists and is not revoked or new token is created.
      *
      * @param $currentToken
-     * @return Token
+     * @return IntegrationModel\Oauth\Token
      */
     protected function getToken($currentToken)
     {
-        /** @var Token $tokenModel */
-        $tokenModel = $this->om->get('Magento\Integration\Model\Oauth\Token');
+        /** @var IntegrationModel\Oauth\Token $tokenModel */
+        $tokenModel = $this->om->get(IntegrationModel\Oauth\Token::class);
 
         return $tokenModel->loadByToken($currentToken);
     }
@@ -73,12 +73,12 @@ class RegisterIntegration implements ObserverInterface
      */
     protected function createNewToken($token)
     {
-        /** @var \Magento\Backend\Model\Auth\Session $adminSession */
-        $adminSession = $this->om->get('Magento\Backend\Model\Auth\Session');
+        /** @var Session $adminSession */
+        $adminSession = $this->om->get(Session::class);
         $adminId = $adminSession->getUser()->getData('user_id');
 
-        /** @var Token $tokenModel */
-        $tokenModel = $this->om->create('Magento\Integration\Model\Oauth\Token');
+        /** @var IntegrationModel\Oauth\Token $tokenModel */
+        $tokenModel = $this->om->create(IntegrationModel\Oauth\Token::class);
         $tokenModel->createAdminToken($adminId);
         $tokenModel->setToken($token);
         $tokenModel->setCallbackUrl(self::NEWSLETTER2GO_URL);
@@ -93,9 +93,8 @@ class RegisterIntegration implements ObserverInterface
      */
     protected function revokePreviousTokens($activeToken)
     {
-        /** @var \Magento\Integration\Model\ResourceModel\Oauth\Token $resource */
-        /** @var \Magento\Framework\DB\Adapter\AdapterInterface $connection */
-        $resource = $this->om->get('Magento\Integration\Model\ResourceModel\Oauth\Token');
+        /** @var IntegrationModel\ResourceModel\Oauth\Token $resource */
+        $resource = $this->om->get(IntegrationModel\ResourceModel\Oauth\Token::class);
         $connection = $resource->getConnection();
         if (!$connection) {
             throw new Exception(new Phrase('Unable to fetch db connection!'));
@@ -106,5 +105,4 @@ class RegisterIntegration implements ObserverInterface
 
         return $connection->update($resource->getMainTable(), ['revoked' => 1], $where);
     }
-
 }

@@ -1,16 +1,17 @@
 <?php
 namespace Newsletter2Go\Export\Block;
 
+use Magento\Sales\Model as SalesModel;
+use Magento\Catalog\Model as CatalogModel;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\App\ObjectManager;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;;
-
+use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 
 class Head extends Template
 {
-
-    const NEWSLETTER2GO_SCRIPT_URL = '//static-sandbox.newsletter2go.com/utils.js';
+    const NEWSLETTER2GO_SCRIPT_URL = '//static-sandbox.newsletter2go.com/utils.js'; // TODO change to production url?
 
     /** @var  ObjectManager */
     private $objectManager;
@@ -86,8 +87,8 @@ class Head extends Template
      */
     private function getOrderData($orderId)
     {
-        /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->get('Magento\Sales\Model\Order')->load($orderId);
+        /** @var SalesModel\Order $order */
+        $order = $this->objectManager->get(SalesModel\Order::class)->load($orderId);
         $storeName = explode(PHP_EOL, $order->getStoreName());
         $result[] = [
             'id' => $orderId,
@@ -108,11 +109,11 @@ class Head extends Template
      */
     private function getItemData($orderId)
     {
-        /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->get('Magento\Sales\Model\Order')->load($orderId);
+        /** @var SalesModel\Order $order */
+        $order = $this->objectManager->get(SalesModel\Order::class)->load($orderId);
         $result = [];
 
-        /** @var \Magento\Sales\Model\Order\Item $item */
+        /** @var SalesModel\Order\Item $item */
         foreach ($order->getAllVisibleItems() as $item) {
             $itemId = $this->getParentProductId($item->getProduct());
             $categoryName = $this->getCategoryName($itemId);
@@ -151,7 +152,7 @@ class Head extends Template
 
     /**
      * Retrieves parent product id if product is configurable
-     * @param $product
+     * @param CatalogModel\Product $product
      * @return mixed
      */
     private function getParentProductId($product)
@@ -159,9 +160,10 @@ class Head extends Template
         $id = $product->getId();
         $type = $product->getTypeId();
         if ($type == 'configurable') {
-            $parents = $this->objectManager->
-            create('Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable')->
-            getParentIdsByChild($id);
+            $parents = $this->objectManager
+                ->create(Configurable::class)
+                ->getParentIdsByChild($id);
+
             if (!empty($parents)) {
                 return $parents[0];
             }

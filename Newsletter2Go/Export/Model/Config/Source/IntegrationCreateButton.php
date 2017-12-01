@@ -7,13 +7,13 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class IntegrationCreateButton extends Field
 {
-
-    const NEWSLETTER2GO_CONNECT_URL = "https://ui.newsletter2go.com/integrations/connect/MAG2/?version=4000&token=<token>&url=";
+    const NEWSLETTER2GO_CONNECT_URL = 'https://ui.newsletter2go.com/integrations/connect/MAG2/?version=4000&token=<token>&url=';
 
     /**
      * Retrieve element HTML markup
      *
      * @param AbstractElement $element
+     *
      * @return string
      */
     protected function _getElementHtml(AbstractElement $element)
@@ -22,7 +22,7 @@ class IntegrationCreateButton extends Field
         $element->setData('value', 'Connect to Newsletter2Go');
 
         if (!$this->_scopeConfig->getValue('newsletter_go/general/token')) {
-            $element->setDisabled('true');
+            $element->setData('disabled', 'true');
         }
 
         // add shop url parameter
@@ -37,7 +37,7 @@ class IntegrationCreateButton extends Field
         $parts = explode('_', $languageCode);
         $url .= '&language=' . $parts[0];
 
-        $element->setData('onclick', "n2goConnect('$url');");
+        $element->setData('onclick', 'n2goConnect(' . json_encode($url) . ');');
 
         return $element->getElementHtml();
     }

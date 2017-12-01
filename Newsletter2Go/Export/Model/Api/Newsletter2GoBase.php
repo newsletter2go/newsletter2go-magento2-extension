@@ -29,6 +29,7 @@ class Newsletter2GoBase extends AbstractNewsletter2Go implements Newsletter2GoBa
     public function __construct(StoreManagerInterface $storeManager, ScopeConfigInterface $config, ResponseFactoryInterface $responseFactory)
     {
         parent::__construct($responseFactory);
+
         $this->storeManager = $storeManager;
         $this->config = $config;
     }

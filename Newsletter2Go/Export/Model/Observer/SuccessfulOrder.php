@@ -8,7 +8,6 @@ use Magento\Framework\View\Layout;
 
 class SuccessfulOrder implements ObserverInterface
 {
-
     /**
      * @var Layout
      */

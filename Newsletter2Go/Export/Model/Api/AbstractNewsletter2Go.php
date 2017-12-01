@@ -37,7 +37,7 @@ abstract class AbstractNewsletter2Go
         $response = $this->responseFactory->create();
         $response->setSuccess(false);
         $response->setMessage($message);
-        $response->setErrorcode(self::ERRNO_PLUGIN_OTHER);
+        $response->setErrorCode(self::ERRNO_PLUGIN_OTHER);
 
         return $response;
     }
@@ -52,7 +52,7 @@ abstract class AbstractNewsletter2Go
         $response = $this->responseFactory->create();
         $response->setSuccess(true);
         $response->setMessage('OK');
-        $response->setData($data);
+        $response->setData(json_encode($data));
 
         return $response;
     }
