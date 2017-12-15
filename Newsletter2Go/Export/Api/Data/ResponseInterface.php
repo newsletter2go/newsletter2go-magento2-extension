@@ -34,7 +34,7 @@ interface ResponseInterface
     /**
      * @return string
      */
-    public function getErrorCode();
+    public function getErrorcode();
 
     /**
      * @param string $errorCode

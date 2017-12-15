@@ -65,7 +65,7 @@ class Response implements ResponseInterface
         return $this;
     }
 
-    public function getErrorCode()
+    public function getErrorcode()
     {
         return $this->errorCode;
     }

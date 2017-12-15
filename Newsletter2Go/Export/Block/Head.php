@@ -11,7 +11,7 @@ use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 
 class Head extends Template
 {
-    const NEWSLETTER2GO_SCRIPT_URL = '//static-sandbox.newsletter2go.com/utils.js'; // TODO change to production url?
+    const NEWSLETTER2GO_SCRIPT_URL = '//static.newsletter2go.com/utils.js';
 
     /** @var  ObjectManager */
     private $objectManager;
@@ -48,7 +48,7 @@ class Head extends Template
         if ($orderId && $companyId && $tracking) {
             $order = '';
             $orderData = $this->getOrderData($orderId);
-            $order .= 'n2g("ecommerce:addTransaction", ' . json_encode($orderData[0]) . ');';
+            $order .= 'n2g("ecommerce:addTransaction", ' . json_encode($orderData) . ');';
             $itemsData = $this->getItemData($orderId);
             $items = $this->loopThroughItems($itemsData);
 
@@ -90,15 +90,14 @@ class Head extends Template
         /** @var SalesModel\Order $order */
         $order = $this->objectManager->get(SalesModel\Order::class)->load($orderId);
         $storeName = explode(PHP_EOL, $order->getStoreName());
-        $result[] = [
+
+        return [
             'id' => $orderId,
             'affiliation' => $storeName[0],
             'revenue' => strval(round($order->getBaseGrandTotal(), 2)),
             'shipping' => strval(round($order->getShippingAmount(), 2)),
             'tax' => strval(round($order->getTaxAmount(), 2)),
         ];
-
-        return $result;
     }
 
     /**
@@ -106,6 +105,8 @@ class Head extends Template
      *
      * @param integer $orderId
      * @return array
+     *
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function getItemData($orderId)
     {
@@ -134,7 +135,10 @@ class Head extends Template
      * Returns category name based on given product id
      *
      * @param integer $itemId
+     *
      * @return string
+     *
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function getCategoryName($itemId)
     {
@@ -159,13 +163,14 @@ class Head extends Template
     {
         $id = $product->getId();
         $type = $product->getTypeId();
+
         if ($type == 'configurable') {
             $parents = $this->objectManager
                 ->create(Configurable::class)
                 ->getParentIdsByChild($id);
 
             if (!empty($parents)) {
-                return $parents[0];
+                return array_shift($parents);
             }
         }
 
