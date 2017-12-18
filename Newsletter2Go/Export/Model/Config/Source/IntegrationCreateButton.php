@@ -8,7 +8,7 @@ use Newsletter2Go\Export\PluginVersion;
 
 class IntegrationCreateButton extends Field
 {
-    const NEWSLETTER2GO_CONNECT_URL = 'https://ui.newsletter2go.com/integrations/connect/MAG2/?version=<version>&token=<token>&url=<shop-url>&callback=<callback>&language=<language>';
+    const N2G_CONNECT_URL = 'https://ui.newsletter2go.com/integrations/connect/MAG2/?version=<version>&token=<token>&url=<shop-url>&callback=<callback>&language=<language>';
 
     /**
      * Retrieve element HTML markup
@@ -37,7 +37,7 @@ class IntegrationCreateButton extends Field
             '<callback>' => urlencode($shopUrl . 'n2gocallback/Callback/Index'),
             '<language>' => $languageCode[0],
         ];
-        $url = str_replace(array_keys($replacements), array_values($replacements), self::NEWSLETTER2GO_CONNECT_URL);
+        $url = str_replace(array_keys($replacements), array_values($replacements), self::N2G_CONNECT_URL);
 
         $element->setData('onclick', 'n2goConnect(' . json_encode($url) . ');');
 

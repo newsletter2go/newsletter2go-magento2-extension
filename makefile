@@ -1,4 +1,4 @@
-version = 0_0_00
+version = ${shell php -r "echo str_replace('.', '_', json_decode(file_get_contents('Newsletter2Go/Export/composer.json'))->version);"}
 outfile = Magento2_nl2go_$(version).zip
 
 $(version): $(outfile)

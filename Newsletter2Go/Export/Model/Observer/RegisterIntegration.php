@@ -15,14 +15,15 @@ class RegisterIntegration implements ObserverInterface
 {
     const NEWSLETTER2GO_URL = 'https://www.newsletter2go.com/';
 
-    /** @var ObjectManagerInterface*/
+    /** @var ObjectManagerInterface */
     private $om;
 
-    /** @var ScopeConfigInterface*/
+    /** @var ScopeConfigInterface */
     private $config;
 
     /**
      * RegisterIntegration constructor.
+     *
      * @param ScopeConfigInterface $config
      * @param ObjectManagerInterface $om
      */
@@ -34,7 +35,10 @@ class RegisterIntegration implements ObserverInterface
 
     /**
      * @param Observer $observer
+     *
      * @throws Exception
+     * @throws \Exception
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute(Observer $observer)
     {
@@ -56,7 +60,8 @@ class RegisterIntegration implements ObserverInterface
      * Returns admin token that is used for api authentication.
      * Token is either fetched if it exists and is not revoked or new token is created.
      *
-     * @param $currentToken
+     * @param string $currentToken
+     *
      * @return IntegrationModel\Oauth\Token
      */
     protected function getToken($currentToken)
@@ -69,7 +74,10 @@ class RegisterIntegration implements ObserverInterface
 
     /**
      * Creates new token
-     * @param $token
+     *
+     * @param string $token
+     *
+     * @throws \Exception
      */
     protected function createNewToken($token)
     {
@@ -87,8 +95,11 @@ class RegisterIntegration implements ObserverInterface
 
     /**
      * Revokes all previous tokens
+     *
      * @param $activeToken
+     *
      * @return int
+     *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function revokePreviousTokens($activeToken)
