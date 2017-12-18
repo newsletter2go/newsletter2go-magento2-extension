@@ -4,10 +4,11 @@ namespace Newsletter2Go\Export\Model\Config\Source;
 
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
+use Newsletter2Go\Export\PluginVersion;
 
 class IntegrationCreateButton extends Field
 {
-    const NEWSLETTER2GO_CONNECT_URL = 'https://ui.newsletter2go.com/integrations/connect/MAG2/?version=4000&token=<token>&url=';
+    const NEWSLETTER2GO_CONNECT_URL = 'https://ui.newsletter2go.com/integrations/connect/MAG2/?version=<version>&token=<token>&url=<shop-url>&callback=<callback>&language=<language>';
 
     /**
      * Retrieve element HTML markup
@@ -25,17 +26,18 @@ class IntegrationCreateButton extends Field
             $element->setData('disabled', 'true');
         }
 
-        // add shop url parameter
+        $pluginVersion = new PluginVersion();
         $shopUrl = $this->_storeManager->getStore()->getBaseUrl();
-        $url = self::NEWSLETTER2GO_CONNECT_URL . urlencode($shopUrl);
+        $languageCode = explode('_', $this->_scopeConfig->getValue('general/locale/code', 'stores'));
 
-        // add callback url parameter
-        $url .= '&callback=' . $shopUrl . 'n2gocallback/Callback/Index';
-
-        // add language parameter
-        $languageCode = $this->_scopeConfig->getValue('general/locale/code', 'stores');
-        $parts = explode('_', $languageCode);
-        $url .= '&language=' . $parts[0];
+        $replacements = [
+            '<version>' => $pluginVersion->getShortVersion(),
+            // <token> is replaced in javascript side
+            '<shop-url>' => urlencode($shopUrl),
+            '<callback>' => urlencode($shopUrl . 'n2gocallback/Callback/Index'),
+            '<language>' => $languageCode[0],
+        ];
+        $url = str_replace(array_keys($replacements), array_values($replacements), self::NEWSLETTER2GO_CONNECT_URL);
 
         $element->setData('onclick', 'n2goConnect(' . json_encode($url) . ');');
 
