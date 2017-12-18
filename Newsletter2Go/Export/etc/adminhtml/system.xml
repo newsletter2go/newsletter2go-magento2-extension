@@ -49,7 +49,7 @@
             </group>
             <group id="connect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Connect</label>
-                <field id="token_reset" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="connect_button" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Register Integration</label>
                     <frontend_model>Newsletter2Go\Export\Model\Config\Source\IntegrationCreateButton</frontend_model>
                     <comment>
