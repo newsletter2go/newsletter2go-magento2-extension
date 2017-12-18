@@ -107,7 +107,7 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
                 $collection->addAttributeToFilter('group_id', $group);
             }
 
-            if ($storeId !== null) {
+            if (!empty($storeId)) {
                 $collection->addAttributeToFilter('store_id', $storeId);
             }
 
@@ -141,22 +141,19 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
                 }
 
                 if (!$billingAdded && isset($customer['default_billing'])) {
-                    $customer['default_billing'] =
-                        json_encode($addressModel->toArray());
+                    $customer['default_billing'] = json_encode($addressModel->toArray());
                 } else {
                     unset($customer['default_billing']);
                 }
 
                 if (isset($customer['default_shipping'])) {
-                    $customer['default_shipping'] =
-                        json_encode($addressModel->load($customer['default_shipping'])->toArray());
+                    $customer['default_shipping'] = json_encode($addressModel->load($customer['default_shipping'])->toArray());
                 }
 
                 if (isset($customer['gender'])) {
                     $customer['gender'] = $customer['gender'] == 1 ? 'm' : 'f';
                 }
             }
-
             return $this->generateSuccessResponse($customers);
 
         }catch(\Exception $e){
