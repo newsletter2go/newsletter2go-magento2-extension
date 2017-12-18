@@ -1,6 +1,6 @@
 <?php
 
-namespace Newsletter2Go\Export;
+namespace Newsletter2Go\Export\Model;
 
 class PluginVersion
 {

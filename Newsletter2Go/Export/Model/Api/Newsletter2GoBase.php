@@ -6,7 +6,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Newsletter2Go\Export\Api\Data\ResponseFactoryInterface;
 use Newsletter2Go\Export\Api\Newsletter2GoBaseInterface;
-use Newsletter2Go\Export\PluginVersion;
+use Newsletter2Go\Export\Model\PluginVersion;
 
 class Newsletter2GoBase extends AbstractNewsletter2Go implements Newsletter2GoBaseInterface
 {

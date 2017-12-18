@@ -4,7 +4,7 @@ namespace Newsletter2Go\Export\Model\Config\Source;
 
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
-use Newsletter2Go\Export\PluginVersion;
+use Newsletter2Go\Export\Model\PluginVersion;
 
 class IntegrationCreateButton extends Field
 {
