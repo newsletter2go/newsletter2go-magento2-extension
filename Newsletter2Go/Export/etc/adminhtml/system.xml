@@ -47,15 +47,6 @@
                     </comment>
                 </field>
             </group>
-            <!--
-            <group id="tracking" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Tracking</label>
-                <field id="tracking_select" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Tracking Buy Events</label>
-                    <source_model>Newsletter2Go\Export\Model\Config\Source\Tracking</source_model>
-                </field>
-            </group>
-             -->
             <group id="connect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Connect</label>
                 <field id="token_reset" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
