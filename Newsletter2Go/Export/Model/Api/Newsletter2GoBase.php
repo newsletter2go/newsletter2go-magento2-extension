@@ -4,8 +4,9 @@ namespace Newsletter2Go\Export\Model\Api;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Newsletter2Go\Export\Api\Data\ResponseInterfaceFactory;
+use Newsletter2Go\Export\Api\Data\ResponseFactoryInterface;
 use Newsletter2Go\Export\Api\Newsletter2GoBaseInterface;
+use Newsletter2Go\Export\Model\PluginVersion;
 
 class Newsletter2GoBase extends AbstractNewsletter2Go implements Newsletter2GoBaseInterface
 {
@@ -21,13 +22,15 @@ class Newsletter2GoBase extends AbstractNewsletter2Go implements Newsletter2GoBa
 
     /**
      * Newsletter2GoBase constructor.
+     *
      * @param StoreManagerInterface $storeManager
      * @param ScopeConfigInterface $config
-     * @param ResponseInterfaceFactory $responseFactory
+     * @param ResponseFactoryInterface $responseFactory
      */
-    public function __construct(StoreManagerInterface $storeManager, ScopeConfigInterface $config, ResponseInterfaceFactory $responseFactory)
+    public function __construct(StoreManagerInterface $storeManager, ScopeConfigInterface $config, ResponseFactoryInterface $responseFactory)
     {
         parent::__construct($responseFactory);
+
         $this->storeManager = $storeManager;
         $this->config = $config;
     }
@@ -50,16 +53,9 @@ class Newsletter2GoBase extends AbstractNewsletter2Go implements Newsletter2GoBa
      */
     public function pluginVersion()
     {
-        $composerPath = __DIR__ . '/../../composer.json';
-        $realPath = realpath($composerPath);
-        $version = '4000';
-        if (file_exists($realPath)) {
-            $json = file_get_contents($realPath);
-            $jsonArray = json_decode($json, true);
-            $version = str_replace('.', '', $jsonArray['version']);
-        }
+        $pluginVersion = new PluginVersion();
 
-        return $this->generateSuccessResponse($version);
+        return $this->generateSuccessResponse($pluginVersion->getShortVersion());
     }
 
     /**

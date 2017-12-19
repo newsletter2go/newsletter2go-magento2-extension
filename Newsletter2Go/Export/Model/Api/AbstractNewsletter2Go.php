@@ -2,7 +2,7 @@
 
 namespace Newsletter2Go\Export\Model\Api;
 
-use Newsletter2Go\Export\Api\Data\ResponseInterfaceFactory;
+use Newsletter2Go\Export\Api\Data\ResponseFactoryInterface;
 
 abstract class AbstractNewsletter2Go
 {
@@ -13,15 +13,16 @@ abstract class AbstractNewsletter2Go
     const ERRNO_PLUGIN_OTHER = 'int-1-600';
 
     /**
-     * @var ResponseInterfaceFactory
+     * @var ResponseFactoryInterface
      */
     protected $responseFactory;
 
     /**
      * AbstractNewsletter2Go constructor.
-     * @param ResponseInterfaceFactory $responseFactory
+     *
+     * @param ResponseFactoryInterface $responseFactory
      */
-    public function __construct(ResponseInterfaceFactory $responseFactory)
+    public function __construct(ResponseFactoryInterface $responseFactory)
     {
         $this->responseFactory = $responseFactory;
     }
@@ -33,11 +34,10 @@ abstract class AbstractNewsletter2Go
      */
     public function generateErrorResponse($message)
     {
-        /** @var \Newsletter2Go\Export\Api\Data\ResponseInterface $response */
         $response = $this->responseFactory->create();
         $response->setSuccess(false);
         $response->setMessage($message);
-        $response->setErrorcode(self::ERRNO_PLUGIN_OTHER);
+        $response->setErrorCode(self::ERRNO_PLUGIN_OTHER);
 
         return $response;
     }
@@ -49,11 +49,10 @@ abstract class AbstractNewsletter2Go
      */
     public function generateSuccessResponse($data = [])
     {
-        /** @var \Newsletter2Go\Export\Api\Data\ResponseInterface $response */
         $response = $this->responseFactory->create();
         $response->setSuccess(true);
         $response->setMessage('OK');
-        $response->setData($data);
+        $response->setData(json_encode($data));
 
         return $response;
     }
