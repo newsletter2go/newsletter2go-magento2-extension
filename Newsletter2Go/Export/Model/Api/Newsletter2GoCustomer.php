@@ -61,6 +61,7 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
 
     public function getCustomers()
     {
+        static $genderMap = [1 => 'm', 2 => 'f'];
         $group = $this->request->getParam('group');
         $hours = $this->request->getParam('hours');
         $subscribed = $this->request->getParam('subscribed');
@@ -99,8 +100,13 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
 
             //Join with subscribers
             if ($subscribed || in_array('subscriber_status', $fields)) {
-                $collection->joinTable(['ns' => 'newsletter_subscriber'], 'customer_id=entity_id', ['subscriber_status'],
-                    'ns.subscriber_status = ' . Subscriber::STATUS_SUBSCRIBED, 'left');
+                $collection->joinTable(
+                    ['ns' => 'newsletter_subscriber'],
+                    'customer_id=entity_id',
+                    ['subscriber_status'],
+                    'ns.subscriber_status = ' . Subscriber::STATUS_SUBSCRIBED,
+                    'left'
+                );
             }
 
             if ($group !== null) {
@@ -130,6 +136,7 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
             $customers = $collection->load()->toArray($fields);
             /** @var CustomerModel\Address $addressModel */
             $addressModel = $this->om->get(CustomerModel\Address::class);
+
             foreach ($customers as &$customer) {
                 $addressModel->load($customer['default_billing']);
                 if (array_key_exists('telephone', $customer)) {
@@ -151,12 +158,12 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
                 }
 
                 if (isset($customer['gender'])) {
-                    $customer['gender'] = $customer['gender'] == 1 ? 'm' : 'f';
+                    $customer['gender'] = isset($genderMap[$customer['gender']]) ? $genderMap[$customer['gender']] : '';
                 }
             }
-            return $this->generateSuccessResponse($customers);
 
-        }catch(\Exception $e){
+            return $this->generateSuccessResponse($customers);
+        } catch (\Exception $e) {
             return $this->generateErrorResponse($e->getMessage());
         }
     }
@@ -226,10 +233,8 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
     }
 
     /**
-     * Customer count export method
-     * @api
-     * @return \Newsletter2Go\Export\Api\Data\ResponseInterface
-     * @throws Exception
+     * @inheritdoc
+     *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getCustomerCount()
@@ -268,13 +273,10 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
     }
 
     /**
-     * Changes customer newsletter status
-     * @api
-     * @param string $email
-     * @param string $status
-     * @param string $storeId
-     * @return \Newsletter2Go\Export\Api\Data\ResponseInterface
-     * @internal param null $store
+     * @inheritdoc
+     *
+     * @throws \Exception
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function changeSubscriberStatus($email, $status = '0', $storeId = '1')
     {
