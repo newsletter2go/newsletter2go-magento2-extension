@@ -18,6 +18,13 @@ class Index extends Action
      */
     private $jsonFactory;
 
+    /**
+     * Index constructor.
+     *
+     * @param Context $context
+     * @param Config $config
+     * @param JsonFactory $jsonFactory
+     */
     public function __construct(Context $context, Config $config, JsonFactory $jsonFactory)
     {
         parent::__construct($context);
@@ -25,12 +32,17 @@ class Index extends Action
         $this->jsonFactory = $jsonFactory;
     }
 
+    /**
+     * Catches callback from Newsletter2go and saves data in database
+     *
+     * @return \Magento\Framework\Controller\Result\Json
+     */
     public function execute()
     {
         $authKey = $this->getRequest()->getParam('auth_key');
         $accessToken = $this->getRequest()->getParam('access_token');
         $refreshToken = $this->getRequest()->getParam('refresh_token');
-        $companyId = $this->getRequest()->getParam('int_id');
+        $companyId = $this->getRequest()->getParam('company_id');
 
         if (!empty($authKey)) {
             $this->config->saveConfig('newsletter_go/authentication/auth_key', $authKey, 'default', 0);

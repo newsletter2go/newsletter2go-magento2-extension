@@ -55,6 +55,14 @@ class Newsletter2GoBase extends AbstractNewsletter2Go implements Newsletter2GoBa
     {
         $pluginVersion = new PluginVersion();
 
+        $composerPath = __DIR__ . '/../../composer.json';
+        $realPath = realpath($composerPath);
+        $version = '4002';
+        if (file_exists($realPath)) {
+            $json = file_get_contents($realPath);
+            $jsonArray = json_decode($json, true);
+            $version = str_replace('.', '', $jsonArray['version']);
+        }
         return $this->generateSuccessResponse($pluginVersion->getShortVersion());
     }
 

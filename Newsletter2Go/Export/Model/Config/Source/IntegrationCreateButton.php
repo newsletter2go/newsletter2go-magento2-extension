@@ -24,6 +24,7 @@ class IntegrationCreateButton extends Field
 
         if (!$this->_scopeConfig->getValue('newsletter_go/general/token')) {
             $element->setData('disabled', 'true');
+            $element->setDisabled('true');
         }
 
         $pluginVersion = new PluginVersion();
@@ -38,6 +39,13 @@ class IntegrationCreateButton extends Field
             '<language>' => $languageCode[0],
         ];
         $url = str_replace(array_keys($replacements), array_values($replacements), self::N2G_CONNECT_URL);
+        // add callback url parameter
+        $url .= '&callback=' . $shopUrl . 'n2gocallback/Callback/Index';
+
+        // add language parameter
+        $languageCode = $this->_scopeConfig->getValue('general/locale/code', 'stores');
+        $parts = explode('_', $languageCode);
+        $url .= '&language=' . $parts[0];
 
         $element->setData('onclick', htmlspecialchars('n2goConnect(' . json_encode($url) . ');'));
 

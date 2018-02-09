@@ -53,16 +53,16 @@ class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoIt
      * @param ScopeConfigInterface $config
      * @param Request $request
      * @param RestResponse $response
-     * @param ResponseFactoryInterface $responseFactory
-     * @param CatalogModel\ProductFactory $productFactory
+     * @param ResponseInterfaceFactory $responseFactory
+     * @param ProductFactory $productFactory
      */
     public function __construct(
         StoreModel\StoreManagerInterface $storeManager,
         ScopeConfigInterface $config,
         Request $request,
         RestResponse $response,
-        ResponseFactoryInterface $responseFactory,
-        CatalogModel\ProductFactory $productFactory
+        ResponseInterfaceFactory $responseFactory,
+        ProductFactory $productFactory
     )
     {
         parent::__construct($responseFactory);
