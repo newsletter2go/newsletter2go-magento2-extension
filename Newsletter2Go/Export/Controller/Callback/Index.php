@@ -42,7 +42,7 @@ class Index extends Action
         $authKey = $this->getRequest()->getParam('auth_key');
         $accessToken = $this->getRequest()->getParam('access_token');
         $refreshToken = $this->getRequest()->getParam('refresh_token');
-        $companyId = $this->getRequest()->getParam('int_id');
+        $companyId = $this->getRequest()->getParam('company_id');
 
         if (!empty($authKey)) {
             $this->config->saveConfig('newsletter_go/authentication/auth_key', $authKey, 'default', 0);

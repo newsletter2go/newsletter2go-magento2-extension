@@ -10,7 +10,7 @@ use Magento\Catalog\Api\CategoryRepositoryInterface;;
 class Head extends Template
 {
 
-    const NEWSLETTER2GO_SCRIPT_URL = '//static-sandbox.newsletter2go.com/utils.js';
+    const NEWSLETTER2GO_SCRIPT_URL = '//static.newsletter2go.com/utils.js';
 
     /** @var  ObjectManager */
     private $objectManager;
