@@ -19,7 +19,7 @@ class PluginVersion
         static $version;
 
         if (!$version) {
-            $composerPath = __DIR__ . '/../../composer.json';
+            $composerPath = __DIR__ . '/../composer.json';
             $realPath = realpath($composerPath);
             $version = $this->defaultVersion;
 

@@ -22,11 +22,6 @@ class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoIt
     private $storeManager;
 
     /**
-     * @var ScopeConfigInterface
-     */
-    private $config;
-
-    /**
      * @var ObjectManager
      */
     private $om;
@@ -35,11 +30,6 @@ class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoIt
      * @var Request
      */
     private $request;
-
-    /**
-     * @var RestResponse
-     */
-    private $response;
 
     /**
      * @var CatalogModel\ProductFactory
@@ -53,25 +43,23 @@ class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoIt
      * @param ScopeConfigInterface $config
      * @param Request $request
      * @param RestResponse $response
-     * @param ResponseInterfaceFactory $responseFactory
-     * @param ProductFactory $productFactory
+     * @param ResponseFactoryInterface $responseFactory
+     * @param CatalogModel\ProductFactory $productFactory
      */
     public function __construct(
         StoreModel\StoreManagerInterface $storeManager,
         ScopeConfigInterface $config,
         Request $request,
         RestResponse $response,
-        ResponseInterfaceFactory $responseFactory,
-        ProductFactory $productFactory
+        ResponseFactoryInterface $responseFactory,
+        CatalogModel\ProductFactory $productFactory
     )
     {
         parent::__construct($responseFactory);
 
         $this->storeManager = $storeManager;
-        $this->config = $config;
         $this->om = ObjectManager::getInstance();
         $this->request = $request;
-        $this->response = $response;
         $this->productFactory = $productFactory;
     }
 
