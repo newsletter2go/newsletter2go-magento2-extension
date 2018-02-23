@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Integration:etc/integration/integration.xsd">
+    <integration name="Newsletter2Go Integration">
+        <email>it@newsletter2go.com</email>
+        <resources>
+            <resource name="Magento_Backend::all"/>
+        </resources>
+    </integration>
+</config>
