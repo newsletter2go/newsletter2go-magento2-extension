@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Newsletter2Go\Export\Api\Data\ResponseInterface" type="Newsletter2Go\Export\Model\Api\Response" />
     <preference for="Newsletter2Go\Export\Api\Data\ResponseFactoryInterface" type="Newsletter2Go\Export\Model\Api\ResponseFactory" />
     <preference for="Newsletter2Go\Export\Api\Newsletter2GoBaseInterface" type="Newsletter2Go\Export\Model\Api\Newsletter2GoBase" />

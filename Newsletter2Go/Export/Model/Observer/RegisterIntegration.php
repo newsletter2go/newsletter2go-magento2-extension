@@ -8,12 +8,18 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Validator\Exception;
 use Magento\Framework\Phrase;
-use Magento\Backend\Model\Auth\Session;
 use Magento\Integration\Model as IntegrationModel;
 
 class RegisterIntegration implements ObserverInterface
 {
     const NEWSLETTER2GO_URL = 'https://www.newsletter2go.com/';
+
+    /**
+     * @see etc/integrations.xml
+     * @see etc/integration/api.xml
+     * @see etc/integration/config.xml
+     */
+    const NEWSLETTER2GO_INTEGRATION_NAME = 'Newsletter2Go Integration';
 
     /** @var ObjectManagerInterface */
     private $om;
@@ -49,8 +55,7 @@ class RegisterIntegration implements ObserverInterface
 
         $tokenModel = $this->getToken($tokenString);
         if (!$tokenModel->getId()) {
-            $this->createNewToken($tokenString);
-            $this->revokePreviousTokens($tokenString);
+            $this->recreateToken($tokenString);
         } else if ($tokenModel->getRevoked()) {
             throw new Exception(new Phrase("Reset current API token because token ($tokenString) is revoked!"));
         }
@@ -79,41 +84,23 @@ class RegisterIntegration implements ObserverInterface
      *
      * @throws \Exception
      */
-    protected function createNewToken($token)
+    protected function recreateToken($token)
     {
-        /** @var Session $adminSession */
-        $adminSession = $this->om->get(Session::class);
-        $adminId = $adminSession->getUser()->getData('user_id');
+        /** @var IntegrationModel\Integration $integration */
+        $integration = $this->om->get(IntegrationModel\Integration::class);
+        $integration->load(self::NEWSLETTER2GO_INTEGRATION_NAME, IntegrationModel\Integration::NAME);
+        $integration->setStatus(IntegrationModel\Integration::STATUS_ACTIVE);
+        $integration->save();
 
-        /** @var IntegrationModel\Oauth\Token $tokenModel */
-        $tokenModel = $this->om->create(IntegrationModel\Oauth\Token::class);
-        $tokenModel->createAdminToken($adminId);
-        $tokenModel->setToken($token);
-        $tokenModel->setCallbackUrl(self::NEWSLETTER2GO_URL);
-        $tokenModel->save();
-    }
+        /** @var IntegrationModel\AuthorizationService $authorizeService */
+        $authorizeService = $this->om->get(IntegrationModel\AuthorizationService::class);
+        $authorizeService->grantAllPermissions($integration->getId());
 
-    /**
-     * Revokes all previous tokens
-     *
-     * @param $activeToken
-     *
-     * @return int
-     *
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    protected function revokePreviousTokens($activeToken)
-    {
-        /** @var IntegrationModel\ResourceModel\Oauth\Token $resource */
-        $resource = $this->om->get(IntegrationModel\ResourceModel\Oauth\Token::class);
-        $connection = $resource->getConnection();
-        if (!$connection) {
-            throw new Exception(new Phrase('Unable to fetch db connection!'));
-        }
-
-        $callback = self::NEWSLETTER2GO_URL;
-        $where = "token != '$activeToken' AND callback_url = '$callback' AND revoked = 0";
-
-        return $connection->update($resource->getMainTable(), ['revoked' => 1], $where);
+        /** @var IntegrationModel\Oauth\Token $verifierToken */
+        $verifierToken = $this->om->get(IntegrationModel\Oauth\Token::class);
+        $verifierToken->createVerifierToken($integration->getConsumerId());
+        $verifierToken->setType(IntegrationModel\Oauth\Token::TYPE_ACCESS);
+        $verifierToken->setToken($token);
+        $verifierToken->save();
     }
 }
