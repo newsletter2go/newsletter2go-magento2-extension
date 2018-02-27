@@ -44,7 +44,7 @@ class RegisterIntegration implements ObserverInterface
     {
         $tokenString = $this->config->getValue('newsletter_go/general/token');
         if (!$tokenString) {
-            throw new Exception(new Phrase("Reset current API token because token must not be empty!"));
+            throw new Exception(new Phrase('Reset current API token because token must not be empty!'));
         }
 
         $tokenModel = $this->getToken($tokenString);

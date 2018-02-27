@@ -1,15 +1,15 @@
 <?php
 namespace Newsletter2Go\Export\Block;
 
+use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\App\ObjectManager;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Api\CategoryRepositoryInterface;;
-
+use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Sales\Model\Order;
 
 class Head extends Template
 {
-
     const NEWSLETTER2GO_SCRIPT_URL = '//static.newsletter2go.com/utils.js';
 
     /** @var  ObjectManager */
@@ -32,6 +32,7 @@ class Head extends Template
         ProductRepositoryInterface $productRepository
     ) {
         parent::__construct($context, $data);
+
         $this->objectManager = ObjectManager::getInstance();
         $this->categoryRepository = $categoryRepository;
         $this->productRepository = $productRepository;
@@ -86,15 +87,15 @@ class Head extends Template
      */
     private function getOrderData($orderId)
     {
-        /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->get('Magento\Sales\Model\Order')->load($orderId);
+        /** @var Order $order */
+        $order = $this->objectManager->get(Order::class)->load($orderId);
         $storeName = explode(PHP_EOL, $order->getStoreName());
         $result[] = [
             'id' => $orderId,
             'affiliation' => $storeName[0],
-            'revenue' => strval(round($order->getBaseGrandTotal(), 2)),
-            'shipping' => strval(round($order->getShippingAmount(), 2)),
-            'tax' => strval(round($order->getTaxAmount(), 2)),
+            'revenue' => (string)round($order->getBaseGrandTotal(), 2),
+            'shipping' => (string)round($order->getShippingAmount(), 2),
+            'tax' => (string)round($order->getTaxAmount(), 2),
         ];
 
         return $result;
@@ -105,11 +106,13 @@ class Head extends Template
      *
      * @param integer $orderId
      * @return array
+     *
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function getItemData($orderId)
     {
-        /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->get('Magento\Sales\Model\Order')->load($orderId);
+        /** @var Order $order */
+        $order = $this->objectManager->get(Order::class)->load($orderId);
         $result = [];
 
         /** @var \Magento\Sales\Model\Order\Item $item */
@@ -121,8 +124,8 @@ class Head extends Template
                 'name' => $item->getName(),
                 'sku' => $item->getSku(),
                 'category' => $categoryName,
-                'price' => strval(round($item->getBasePrice(), 2)),
-                'quantity' => strval(round($item->getQtyOrdered(), 2)),
+                'price' => (string)round($item->getBasePrice(), 2),
+                'quantity' => (string)round($item->getQtyOrdered(), 2),
             ];
         }
 
@@ -134,6 +137,7 @@ class Head extends Template
      *
      * @param integer $itemId
      * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function getCategoryName($itemId)
     {
@@ -151,17 +155,15 @@ class Head extends Template
 
     /**
      * Retrieves parent product id if product is configurable
-     * @param $product
+     * @param \Magento\Catalog\Model\Product $product
      * @return mixed
      */
     private function getParentProductId($product)
     {
         $id = $product->getId();
         $type = $product->getTypeId();
-        if ($type == 'configurable') {
-            $parents = $this->objectManager->
-            create('Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable')->
-            getParentIdsByChild($id);
+        if ($type === 'configurable') {
+            $parents = $this->objectManager->create(Configurable::class)->getParentIdsByChild($id);
             if (!empty($parents)) {
                 return $parents[0];
             }

@@ -24,11 +24,6 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
     private $storeManager;
 
     /**
-     * @var ScopeConfigInterface
-     */
-    private $config;
-
-    /**
      * @var ObjectManager
      */
     private $om;
@@ -53,7 +48,6 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
         parent::__construct($responseFactory);
 
         $this->storeManager = $storeManager;
-        $this->config = $config;
         $this->om = ObjectManager::getInstance();
         $this->request = $request;
         $this->response = $response;
@@ -75,14 +69,14 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
             $billingAdded = false;
             if (empty($fields)) {
                 $fields = array_keys($this->buildCustomerFields());
-            } else if (!in_array('default_billing', $fields)) {
+            } else if (!in_array('default_billing', $fields, true)) {
                 $fields[] = 'default_billing';
                 $billingAdded = true;
             }
 
             if ($group === 'subscribers-only') {
                 if ($billingAdded) {
-                    $index = array_search('default_billing', $fields);
+                    $index = array_search('default_billing', $fields, true);
                     unset($fields[$index]);
                 }
 
@@ -99,7 +93,7 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
             $collection->addAttributeToSelect('*');
 
             //Join with subscribers
-            if ($subscribed || in_array('subscriber_status', $fields)) {
+            if ($subscribed || in_array('subscriber_status', $fields, true)) {
                 $collection->joinTable(
                     ['ns' => 'newsletter_subscriber'],
                     'customer_id=entity_id',
