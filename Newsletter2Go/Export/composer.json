@@ -2,7 +2,7 @@
   "name": "newsletter2go/magento2-export",
   "description": "",
   "type": "magento2-module",
-  "version": "4.1.04",
+  "version": "4.1.03",
   "license": [
     "OSL-3.0",
     "AFL-3.0"
