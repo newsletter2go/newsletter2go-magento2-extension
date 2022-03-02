@@ -9,7 +9,7 @@ class PluginVersion
      *
      * @var string
      */
-    private $defaultVersion = '4.1.00';
+    private $defaultVersion = '4.1.04';
 
     /**
      * @return string
