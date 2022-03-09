@@ -39,7 +39,7 @@ class IntegrationCreateButton extends Field
         ];
         $url = str_replace(array_keys($replacements), array_values($replacements), self::N2G_CONNECT_URL);
 
-        $element->setData('onclick', htmlspecialchars('n2goConnect(' . json_encode($url) . ');'));
+        $element->setData('onclick', 'n2goConnect(' . json_encode($url) . ');');
 
         return $element->getElementHtml();
     }
