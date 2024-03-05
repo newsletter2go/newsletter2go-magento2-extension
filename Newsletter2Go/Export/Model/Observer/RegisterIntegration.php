@@ -6,8 +6,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Validator\Exception;
 use Magento\Framework\Phrase;
+use Magento\Framework\Validator\Exception;
 use Magento\Integration\Model as IntegrationModel;
 
 class RegisterIntegration implements ObserverInterface

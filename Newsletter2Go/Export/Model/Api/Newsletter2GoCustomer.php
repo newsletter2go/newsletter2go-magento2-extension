@@ -2,19 +2,19 @@
 
 namespace Newsletter2Go\Export\Model\Api;
 
+use Magento\Customer\Model as CustomerModel;
+use Magento\Customer\Model\ResourceModel as CustomerResourceModel;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Webapi\Exception;
 use Magento\Framework\Webapi\Request;
+use Magento\Framework\Webapi\Rest\Response;
+use Magento\Newsletter\Model as NewsletterModel;
+use Magento\Newsletter\Model\ResourceModel as NewsletterResourceModel;
 use Magento\Newsletter\Model\Subscriber;
+use Magento\Store\Model\StoreManagerInterface;
 use Newsletter2Go\Export\Api\Data\ResponseFactoryInterface;
 use Newsletter2Go\Export\Api\Newsletter2GoCustomerInterface;
-use Magento\Framework\Webapi\Rest\Response;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\App\ObjectManager;
-use Magento\Customer\Model as CustomerModel;
-use Magento\Newsletter\Model as NewsletterModel;
-use Magento\Customer\Model\ResourceModel as CustomerResourceModel;
-use Magento\Newsletter\Model\ResourceModel as NewsletterResourceModel;
 
 class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2GoCustomerInterface
 {
@@ -43,8 +43,7 @@ class Newsletter2GoCustomer extends AbstractNewsletter2Go implements Newsletter2
         ScopeConfigInterface $config,
         Request $request,
         Response $response,
-        ResponseFactoryInterface $responseFactory)
-    {
+        ResponseFactoryInterface $responseFactory) {
         parent::__construct($responseFactory);
 
         $this->storeManager = $storeManager;

@@ -1,11 +1,11 @@
 <?php
 namespace Newsletter2Go\Export\Block;
 
-use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
-use Magento\Framework\View\Element\Template;
-use Magento\Framework\App\ObjectManager;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\View\Element\Template;
 use Magento\Sales\Model\Order;
 
 class Head extends Template
@@ -55,7 +55,7 @@ class Head extends Template
             $script = '<script id="n2g_script">
             !function(e,t,n,c,r,a,i){e.Newsletter2GoTrackingObject=r,e[r]=e[r]||function(){(e[r].q=e[r].q||[]).
             push(arguments)},e[r].l=1*new Date,a=t.createElement(n),i=t.getElementsByTagName(n)[0],a.async=1,a.src=c,i.
-            parentNode.insertBefore(a,i)}(window,document,"script"," ' . static::NEWSLETTER2GO_SCRIPT_URL. '","n2g");
+            parentNode.insertBefore(a,i)}(window,document,"script"," ' . static::NEWSLETTER2GO_SCRIPT_URL . '","n2g");
             n2g("create", "' . $companyId . '"); ' . $order . $items . 'n2g("ecommerce:send");</script>';
         }
 
@@ -93,9 +93,9 @@ class Head extends Template
         $result[] = [
             'id' => $orderId,
             'affiliation' => $storeName[0],
-            'revenue' => (string)round($order->getBaseGrandTotal(), 2),
-            'shipping' => (string)round($order->getShippingAmount(), 2),
-            'tax' => (string)round($order->getTaxAmount(), 2),
+            'revenue' => (string) round($order->getBaseGrandTotal(), 2),
+            'shipping' => (string) round($order->getShippingAmount(), 2),
+            'tax' => (string) round($order->getTaxAmount(), 2),
         ];
 
         return $result;
@@ -124,8 +124,8 @@ class Head extends Template
                 'name' => $item->getName(),
                 'sku' => $item->getSku(),
                 'category' => $categoryName,
-                'price' => (string)round($item->getBasePrice(), 2),
-                'quantity' => (string)round($item->getQtyOrdered(), 2),
+                'price' => (string) round($item->getBasePrice(), 2),
+                'quantity' => (string) round($item->getQtyOrdered(), 2),
             ];
         }
 

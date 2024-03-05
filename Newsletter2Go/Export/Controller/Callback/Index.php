@@ -1,9 +1,9 @@
 <?php
 namespace Newsletter2Go\Export\Controller\Callback;
 
+use Magento\Config\Model\ResourceModel\Config;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Config\Model\ResourceModel\Config;
 use Magento\Framework\Controller\Result\JsonFactory;
 
 class Index extends Action

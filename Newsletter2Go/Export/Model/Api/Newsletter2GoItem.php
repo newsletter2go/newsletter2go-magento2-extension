@@ -3,16 +3,16 @@
 namespace Newsletter2Go\Export\Model\Api;
 
 use Magento\Catalog\Model as CatalogModel;
-use Magento\Store\Model as StoreModel;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
-use Magento\Tax\Model\Calculation as TaxCalculation;
-use Magento\Tax\Helper\Data as TaxData;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Webapi\Request;
 use Magento\Framework\Webapi\Rest\Response as RestResponse;
-use Newsletter2Go\Export\Api\Newsletter2GoItemInterface;
+use Magento\Store\Model as StoreModel;
+use Magento\Tax\Helper\Data as TaxData;
+use Magento\Tax\Model\Calculation as TaxCalculation;
 use Newsletter2Go\Export\Api\Data\ResponseFactoryInterface;
-use Magento\Framework\App\ObjectManager;
+use Newsletter2Go\Export\Api\Newsletter2GoItemInterface;
 
 class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoItemInterface
 {
@@ -53,8 +53,7 @@ class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoIt
         RestResponse $response,
         ResponseFactoryInterface $responseFactory,
         CatalogModel\ProductFactory $productFactory
-    )
-    {
+    ) {
         parent::__construct($responseFactory);
 
         $this->storeManager = $storeManager;

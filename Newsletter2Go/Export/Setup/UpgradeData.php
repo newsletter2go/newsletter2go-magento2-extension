@@ -4,8 +4,8 @@ namespace Newsletter2Go\Export\Setup;
 
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Integration\Model\ConfigBasedIntegrationManager;
 use Magento\Framework\Setup\UpgradeDataInterface;
+use Magento\Integration\Model\ConfigBasedIntegrationManager;
 
 class UpgradeData implements UpgradeDataInterface
 {
