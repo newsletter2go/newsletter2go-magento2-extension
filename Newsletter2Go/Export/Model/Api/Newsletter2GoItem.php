@@ -237,7 +237,10 @@ class Newsletter2GoItem extends AbstractNewsletter2Go implements Newsletter2GoIt
      */
     protected function calculatePrice($price, $vat, $taxIncluded = true)
     {
-        return number_format($taxIncluded ? $price : $price * (1 + $vat * 0.01), 2);
+        $num = $taxIncluded ? $price : $price * (1 + $vat * 0.01);
+        if (is_null($num)) $num = 0;
+
+        return number_format($num, 2);
     }
 
     /**
